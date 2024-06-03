@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>to do app</title>
+    <link rel="stylesheet" href="/mainpage.css">
+</head>
+<body>
+    <header>
+        <form>
+            <input type="text" name="keyWord" placeholder="SEARCH FOR TASK">
+        </form>
+        <a href="/addTask">ADD TASK</a>
+    </header>
+    <div class="tasks">
+
+        <% for (let i = 0; i < tasks.length; i++) { %>
+            <div class="task">
+                <div class="task-title">
+                    <h1><%= tasks[i].taskName %></h1>
+                    <p><%= tasks[i].taskDescreption %></p>
+                    <% if (tasks[i].completed === false) { %>
+                        <p class="unCompleted" onclick="updateTaskStatus('<%= tasks[i]._id %>', '<%= i %>')" style="position: relative; top: 20px; color: red; font-weight: bold; font-size: 23px; cursor: pointer;">X</p>
+                    <% } else { %>
+                        <p class="completed" onclick="updateTaskStatusToUnCompleted('<%= tasks[i]._id %>', '<%= i %>')" style="position: relative; top: 20px; color: green; font-weight: bold; font-size: 23px; cursor: pointer;">completed</p>
+                    <% } %>
+                </div>
+                <div class="task-options">
+                    <div class="hot-options">
+                        <a href="/edit/<%= tasks[i]._id %>">edit</a>
+                        <button class="deleteButton" onclick="deleteTask('<%= tasks[i]._id %>', '<%= i %>')" style="cursor: pointer;">delete</butt>
+                    </div>
+                    <a href="/taskInfo/<%= tasks[i]._id %>">see more</a>
+                </div>
+            </div>
+        <% } %>
+
+    </div>
+    <script>
+
+async function updateTaskStatus(id, i) {
+    let taskTitle = document.querySelectorAll(".task-title")[i];
+    let unCompleted = taskTitle.querySelector(".unCompleted");
+
+    // إزالة العنصر الحالي
+    taskTitle.removeChild(unCompleted);
+
+    // إضافة عنصر جديد
+    let completed = document.createElement("p");
+    completed.setAttribute("class", "completed");
+    completed.style.cssText = "position: relative; top: 20px; color: green; cursor: pointer; font-weight: bold; font-size: 23px";
+    completed.textContent = "completed";
+    taskTitle.appendChild(completed);
+
+    await fetch("/completeTask", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id })
+    });
+}
+
+async function updateTaskStatusToUnCompleted(id, i) {
+    let taskTitle = document.querySelectorAll(".task-title")[i];
+    let completed = taskTitle.querySelector(".completed");
+
+    // إزالة العنصر الحالي
+    taskTitle.removeChild(completed);
+
+    // إضافة عنصر جديد
+    let unCompleted = document.createElement("p");
+    unCompleted.setAttribute("class", "unCompleted");
+    unCompleted.style.cssText = "position: relative; top: 20px; color: red; font-weight: bold; font-size: 23px; cursor: pointer;";
+    unCompleted.textContent = "X";
+    taskTitle.appendChild(unCompleted);
+
+    await fetch("/unCompleteTask", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ id })
+    });
+}
+
+async function deleteTask(id, i) {
+
+    let task = document.getElementsByClassName("task")[i];
+
+    task.remove();
+
+
+    await fetch(`/deleteTask/${id}`, {
+        method: "DELETE",
+    })
+
+}
+
+    </script>
+</body>
+</html>

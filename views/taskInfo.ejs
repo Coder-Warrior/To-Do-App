@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>taskInfo</title>
+</head>
+<body>
+    <h1><%= task.taskName %></h1>
+    <h3><%= task.taskDescreption %></h3>
+    <% if (task.completed === false) { %>
+        <p class="unCompleted" style="position: relative; top: 20px; color: red; font-weight: bold; font-size: 23px;">X</p>
+    <% } else { %>
+        <p class="completed" style="position: relative; top: 20px; color: green; font-weight: bold; font-size: 23px;">completed</p>
+    <% } %>
+</body>
+</html>

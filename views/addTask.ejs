@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>to do app</title>
+    <link rel="stylesheet" href="/mainpage.css">
+</head>
+<body>
+    <h1>ADD TASK</h1>
+    <form method="post">
+        <input type="text" name="taskName">
+        <p class="taskNameError" style="margin: 15px; font-size: 18px; color: red"></p>
+        <input type="text" name="taskDescreption">
+        <p class="taskDescreptionError" style="margin: 15px; font-size: 18px; color: red"></p>
+        <input type="submit" value="ADD TASK">
+    </form>
+    <script>
+        const form = document.querySelector("form");
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const taskName = form.taskName.value;
+            const taskDescreption = form.taskDescreption.value;
+
+            let taskNameError = document.querySelector(".taskNameError");
+            let taskDescreptionError = document.querySelector(".taskDescreptionError");
+
+            try {
+                const res = await fetch("/addTask", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ taskName, taskDescreption })
+                });
+                const data = await res.json();
+                if (data.added) {
+                    location.assign("/");
+                } else {
+                    taskNameError.textContent = data.errors.taskName;
+                    taskDescreptionError.textContent = data.errors.taskDescreption;
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    </script>
+</body>
+</html>
